@@ -40,7 +40,7 @@
     "axios": "^0.27.2",
     "class-validator": "^0.13.2",
     "cross-env": "^7.0.3",
-    "dayjs": "^1.11.4",
+    "dayjs": "^1.11.6",
     "fast-json-parse": "^1.0.3",
     "fastify": "^4.5.2",
     "fastify-cookie": "^5.7.0",

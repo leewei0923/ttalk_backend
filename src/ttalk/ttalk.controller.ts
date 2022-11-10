@@ -5,6 +5,7 @@ import { RegisterDto } from './dto/register.dto';
 import { TtalkService } from './ttalk.service';
 import { UpdateDto } from './dto/update.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AddFriendDto } from './dto/ttalk.dto';
 
 @Controller('/server/ttalk')
 export class TtalkController {
@@ -88,5 +89,14 @@ export class TtalkController {
   @Post('/searchUser')
   searchUser(@Body() data: { account: string }) {
     return this.ttalkService.searchUser(data.account);
+  }
+
+  /**
+   * 添加好友
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/addFriend')
+  addFriend(@Body() data: AddFriendDto) {
+    return this.ttalkService.addFriend(data);
   }
 }

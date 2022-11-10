@@ -2,6 +2,8 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { getConfig } from '../../utils/index';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import { ttalk_user } from 'src/ttalk/entities/ttalk.entity.mysql';
+import { ttalk_user_concat } from 'src/ttalk/entities/user_concat.entity.mysql';
+import { ttalk_online } from 'src/ttalk/entities/online.entity.mysql';
 
 /**
  * Mysql 数据库
@@ -17,7 +19,7 @@ const MYSQL_DATABASE_CONFIG = {
   // entities: [
   //   path.join(__dirname, `dist/**/*.${MYSQL_CONFIG.entities}.entity{.ts,.js}`),
   // ],
-  entities: [ttalk_user],
+  entities: [ttalk_user, ttalk_user_concat, ttalk_online],
 };
 
 const MYSQL_DATA_SOURCE = new DataSource(MYSQL_DATABASE_CONFIG);

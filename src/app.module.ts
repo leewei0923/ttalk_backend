@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { getConfig } from 'src/utils';
 import { AuthModule } from './auth/auth.module';
 import { TtalkModule } from './ttalk/ttalk.module';
-import { EventsGateway } from './events.gateway';
 
 @Module({
   imports: [
@@ -18,6 +17,6 @@ import { EventsGateway } from './events.gateway';
     TtalkModule,
   ],
   controllers: [AppController],
-  providers: [AppService, EventsGateway],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -1,13 +1,24 @@
 import { Module } from '@nestjs/common';
 import { TtalkService } from './ttalk.service';
 import { TtalkController } from './ttalk.controller';
-import { TTalkUserProviders } from './talk.providers';
+import {
+  TTalkOnlineProviders,
+  TTalkUserConcatProviders,
+  TTalkUserProviders,
+} from './talk.providers';
 import { MysqlDatabaseModule } from 'src/comm/database/mysql.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { EventsGateway } from './events.gateway';
 
 @Module({
   imports: [MysqlDatabaseModule, AuthModule],
   controllers: [TtalkController],
-  providers: [TtalkService, ...TTalkUserProviders],
+  providers: [
+    TtalkService,
+    ...TTalkUserProviders,
+    ...TTalkUserConcatProviders,
+    ...TTalkOnlineProviders,
+    EventsGateway,
+  ],
 })
 export class TtalkModule {}

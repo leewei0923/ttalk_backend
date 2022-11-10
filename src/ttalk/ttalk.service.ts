@@ -5,6 +5,9 @@ import { encryptPassword, makeSalt } from '../utils/cryptogram';
 import { ttalk_user } from './entities/ttalk.entity.mysql';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateDto } from './dto/update.dto';
+import { AddFriendDto } from './dto/ttalk.dto';
+import { ttalk_user_concat } from './entities/user_concat.entity.mysql';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class TtalkService {
@@ -12,6 +15,8 @@ export class TtalkService {
     private readonly authService: AuthService,
     @Inject('TTALK_USER_REPOSITORY')
     private TTalkUserRepository: Repository<ttalk_user>,
+    @Inject('TTALK_USER_CONCAT_REPOSITORY')
+    private TTalkUserConcatRepository: Repository<ttalk_user_concat>,
   ) {}
 
   async existUser(account: string): Promise<number> {
@@ -150,4 +155,83 @@ export class TtalkService {
       console.log(res);
     } catch (error) {}
   }
+
+  /**
+   * 添加好友
+   */
+
+  async addFriend(info: AddFriendDto) {
+    const { type } = info;
+
+    switch (type) {
+      case 'apply':
+        return this.#addFriendApply(info);
+
+      case 'accept':
+        return this.#addFriendAccept(info);
+
+      case 'black':
+        break;
+    }
+  }
+
+  async #addFriendApply(info: AddFriendDto) {
+    const { user_account, friend_account, verifyInformation, remark, tags } =
+      info;
+    const curDate = dayjs().format('YYYY-MM-DD HH:mm');
+
+    try {
+      const res = await this.TTalkUserConcatRepository.save({
+        user_account: user_account,
+        friend_account: friend_account,
+        add_time: curDate,
+        update_time: curDate,
+        friend_flag: false,
+        verifyInformation: verifyInformation,
+        remark: remark,
+        blacklist: false,
+        tags: tags,
+      });
+      console.log(res);
+    } catch (error) {
+      console.log('error: ', error);
+    }
+
+    return {
+      status: 'ok',
+      code: 200,
+      msg: '申请成功',
+    };
+  }
+
+  async #addFriendAccept(info: AddFriendDto) {
+    const { user_account, friend_account } = info;
+
+    try {
+      const query = await this.TTalkUserConcatRepository.query(
+        `UPDATE ttalk_user_concat SET friend_flag='${true}' where friend_flag = '${user_account}' and user_account = '${friend_account}'`,
+      );
+
+      this.TTalkUserConcatRepository.save({
+        user_account: user_account,
+        friend_account: friend_account,
+        friend_flag: true,
+        verifyInformation: '',
+        remark: '',
+        blacklist: false,
+        tags: '',
+      });
+
+      return {
+        status: 'ok',
+        code: 200,
+        msg: '申请成功',
+      };
+    } catch (error) {}
+  }
+  // ================================
+
+  /**
+   * 加载信息
+   */
 }
