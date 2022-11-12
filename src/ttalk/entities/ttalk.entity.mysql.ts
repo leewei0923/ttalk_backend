@@ -33,5 +33,8 @@ export class ttalk_user {
   add_time: string;
 
   @Column()
+  avatar: string;
+
+  @Column()
   ip: string;
 }

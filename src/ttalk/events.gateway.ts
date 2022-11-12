@@ -109,14 +109,14 @@ export class EventsGateway {
   async handleMessage(client: Socket, payload: addFriendType): Promise<string> {
     const { type, user_account, friend_account } = payload;
 
-    if (type === 'apply') {
-      const user = await this.TTalkOnlineRepository.findOne({
-        where: {
-          account: friend_account,
-          onlineFlag: true,
-        },
-      });
+    const online = await this.TTalkOnlineRepository.findOne({
+      where: {
+        account: friend_account,
+        onlineFlag: true,
+      },
+    });
 
+    if (type === 'apply') {
       const friend = await this.TTalkUserConcatRepository.find({
         select: {
           id: true,
@@ -145,17 +145,30 @@ export class EventsGateway {
         `SELECT id, social, ip,  nickname, motto , account, avatar, bird_date FROM ttalk_user WHERE account = '${user_account}'`,
       );
 
-      console.log(friend[0], userRes[0]);
-
-      if (user) {
-        this.server.to(user.online_id).emit('addFriend', {
+      if (online) {
+        this.server.to(online.online_id).emit('addFriend', {
           type: 'apply',
           friends: friend[0],
           user: userRes[0],
         });
       }
+    } else if (type === 'accept') {
+      // 更新联系人身份关系
+      const query = `UPDATE ttalk_user_concat SET friend_flag = true WHERE user_account = '${friend_account}' AND friend_account = '${user_account}'`;
+      this.TTalkUserConcatRepository.query(query);
+
+      // 查找基础信息
+      const userRes: any = await this.TTalkUserRepository.query(
+        `SELECT id, social, ip,  nickname, motto , account, avatar, bird_date FROM ttalk_user WHERE account = '${user_account}'`,
+      );
+
+      this.server.to(online.online_id).emit('addFriend', {
+        type: 'accept',
+        friends: { friend_account: user_account },
+        user: userRes[0],
+      });
     }
-    return 'hello';
+    return '';
   }
 
   /**

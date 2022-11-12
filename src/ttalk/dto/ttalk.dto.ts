@@ -10,16 +10,13 @@ export class AddFriendDto {
   friend_account: string; // 被申请人账号
 
   @IsNotEmpty()
-  friend_flag?: boolean; // 是否是朋友,申请时为false
-
-  @IsNotEmpty()
   verifyInformation?: string; // 验证信息
 
   @IsNotEmpty()
   remark?: string;
 
   @IsNotEmpty()
-  blacklist: boolean;
+  blacklist?: boolean;
 
   @IsNotEmpty()
   tags: string;
