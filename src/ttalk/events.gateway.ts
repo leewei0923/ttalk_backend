@@ -25,6 +25,7 @@ export class EventsGateway {
 
   @WebSocketServer() server: Server;
 
+  // 当socket初始连接的时候
   async handleConnection(client: Socket): Promise<string> {
     const onlineId = client.id;
     const time = dayjs().format('YYYY-MM-DD HH:mm');
@@ -32,13 +33,13 @@ export class EventsGateway {
 
     const curtime = Date.now();
     const data = await this.TTalkOnlineRepository.find({
-      where: { account: account, onlineFlag: true },
+      where: { account: account, onlineFlag: false, update_time: time },
       order: {
         update_time: 'DESC',
       },
     });
 
-    if (Array.isArray(data) && typeof data[0] === 'object') {
+    if (data.length > 0) {
       const { add_time, id } = data[0];
 
       if (curtime - new Date(data[0].update_time).getTime() < 86400000) {
