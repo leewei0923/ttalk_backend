@@ -117,10 +117,42 @@ export class EventsGateway {
         },
       });
 
+      const friend = await this.TTalkUserConcatRepository.find({
+        select: {
+          id: true,
+          user_account: true,
+          friend_account: true,
+          add_time: true,
+          update_time: true,
+          friend_flag: true,
+          verifyInformation: true,
+          remark: true,
+          blacklist: true,
+          tags: true,
+          ip: true,
+        },
+        where: {
+          user_account: user_account,
+          friend_account: friend_account,
+          friend_flag: false,
+        },
+        order: {
+          update_time: 'desc',
+        },
+      });
+
+      const userRes: any = await this.TTalkUserRepository.query(
+        `SELECT id, social, ip,  nickname, motto , account, avatar, bird_date FROM ttalk_user WHERE account = '${user_account}'`,
+      );
+
+      console.log(friend[0], userRes[0]);
+
       if (user) {
-        this.server
-          .to(user.online_id)
-          .emit('addFriend', { type: 'apply', friend_account: user_account });
+        this.server.to(user.online_id).emit('addFriend', {
+          type: 'apply',
+          friends: friend[0],
+          user: userRes[0],
+        });
       }
     }
     return 'hello';

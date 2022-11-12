@@ -96,7 +96,7 @@ export class TtalkController {
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('/addFriend')
-  addFriend(@Body() data: AddFriendDto) {
-    return this.ttalkService.addFriend(data);
+  addFriend(@Body() data: AddFriendDto, @IpAddress() ip: string) {
+    return this.ttalkService.addFriend(data, ip);
   }
 }

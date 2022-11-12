@@ -151,8 +151,6 @@ export class TtalkService {
           msg: '没有找到该用户',
         };
       }
-
-      console.log(res);
     } catch (error) {}
   }
 
@@ -160,12 +158,12 @@ export class TtalkService {
    * 添加好友
    */
 
-  async addFriend(info: AddFriendDto) {
+  async addFriend(info: AddFriendDto, ip: string) {
     const { type } = info;
 
     switch (type) {
       case 'apply':
-        return this.#addFriendApply(info);
+        return this.#addFriendApply(info, ip);
 
       case 'accept':
         return this.#addFriendAccept(info);
@@ -175,24 +173,41 @@ export class TtalkService {
     }
   }
 
-  async #addFriendApply(info: AddFriendDto) {
+  async #addFriendApply(info: AddFriendDto, ip: string) {
     const { user_account, friend_account, verifyInformation, remark, tags } =
       info;
     const curDate = dayjs().format('YYYY-MM-DD HH:mm');
 
-    try {
-      const res = await this.TTalkUserConcatRepository.save({
+    const searchUser = await this.TTalkUserConcatRepository.find({
+      where: {
         user_account: user_account,
         friend_account: friend_account,
-        add_time: curDate,
-        update_time: curDate,
         friend_flag: false,
-        verifyInformation: verifyInformation,
-        remark: remark,
-        blacklist: false,
-        tags: tags,
-      });
-      console.log(res);
+      },
+      order: {
+        update_time: 'desc',
+      },
+    });
+
+    try {
+      if (searchUser.length <= 0) {
+        this.TTalkUserConcatRepository.save({
+          user_account: user_account,
+          friend_account: friend_account,
+          add_time: curDate,
+          update_time: curDate,
+          friend_flag: false,
+          verifyInformation: verifyInformation,
+          remark: remark,
+          blacklist: false,
+          tags: tags,
+          ip: ip,
+        });
+      } else {
+        const query = `UPDATE ttalk_user_concat SET update_time = '${curDate}', verifyInformation = '${verifyInformation}', remark = '${remark}', tags = '${tags}' where id = '${searchUser[0].id}' and user_account = '${searchUser[0].user_account}' `;
+
+        this.TTalkUserConcatRepository.query(query);
+      }
     } catch (error) {
       console.log('error: ', error);
     }
