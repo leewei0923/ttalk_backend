@@ -83,6 +83,21 @@ export class EventsGateway {
     id?: number,
   ) {
     if (type === 'add') {
+      // 避免出现多个在线的情况
+      this.TTalkOnlineRepository.findOne({
+        where: {
+          account,
+          onlineFlag: true,
+        },
+      }).then((res) => {
+        if (typeof res === 'object' && res?.online_id) {
+          console.log('运行');
+          this.TTalkOnlineRepository.query(
+            `UPDATE ttalk_online SET onlineFlag = false WHERE account = '${account}' and online_id = '${res.online_id}'`,
+          );
+        }
+      });
+
       const res = await this.TTalkOnlineRepository.save({
         account: account,
         online_id: online_id,

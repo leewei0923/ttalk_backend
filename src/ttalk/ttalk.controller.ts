@@ -5,7 +5,7 @@ import { RegisterDto } from './dto/register.dto';
 import { TtalkService } from './ttalk.service';
 import { UpdateDto } from './dto/update.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { AddFriendDto } from './dto/ttalk.dto';
+import { AddFriendDto, checkOnlineDto } from './dto/ttalk.dto';
 
 @Controller('/server/ttalk')
 export class TtalkController {
@@ -98,5 +98,17 @@ export class TtalkController {
   @Post('/addFriend')
   addFriend(@Body() data: AddFriendDto, @IpAddress() ip: string) {
     return this.ttalkService.addFriend(data, ip);
+  }
+
+  /**
+   * 加载用户的登录状态
+   * @param data
+   * @param ip
+   * @returns
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/checkOnline')
+  CheckOnline(@Body() data: checkOnlineDto, @IpAddress() ip: string) {
+    return this.ttalkService.loadAccountStatus(data, ip);
   }
 }

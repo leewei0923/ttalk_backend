@@ -11,6 +11,7 @@ import { generateDocument } from './doc';
 import { AppModule } from './app.module';
 import { FastifyLogger } from './comm/logger';
 import fastify from 'fastify';
+import fastifyCookie from '@fastify/cookie';
 
 declare const module: any;
 
@@ -44,6 +45,11 @@ async function bootstrap() {
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
+
+  // 添加cookie
+  app.register(fastifyCookie, {
+    secret: 'ttalk_secret',
+  });
 
   await app.listen(3001);
 }

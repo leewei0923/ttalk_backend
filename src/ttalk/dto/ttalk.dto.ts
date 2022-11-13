@@ -24,3 +24,15 @@ export class AddFriendDto {
   @IsNotEmpty()
   type: 'apply' | 'accept' | 'black';
 }
+
+/**
+ * 验证账号的登录状态
+ */
+export class checkOnlineDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  type: 'get';
+
+  @IsNotEmpty()
+  to_account: string[];
+}

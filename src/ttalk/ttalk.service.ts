@@ -5,9 +5,10 @@ import { encryptPassword, makeSalt } from '../utils/cryptogram';
 import { ttalk_user } from './entities/ttalk.entity.mysql';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateDto } from './dto/update.dto';
-import { AddFriendDto } from './dto/ttalk.dto';
+import { AddFriendDto, checkOnlineDto } from './dto/ttalk.dto';
 import { ttalk_user_concat } from './entities/user_concat.entity.mysql';
 import dayjs from 'dayjs';
+import { ttalk_online } from './entities/online.entity.mysql';
 
 @Injectable()
 export class TtalkService {
@@ -17,6 +18,8 @@ export class TtalkService {
     private TTalkUserRepository: Repository<ttalk_user>,
     @Inject('TTALK_USER_CONCAT_REPOSITORY')
     private TTalkUserConcatRepository: Repository<ttalk_user_concat>,
+    @Inject('TTALK_ONLINE_REPOSITORY')
+    private TTalkOnlineRepository: Repository<ttalk_online>,
   ) {}
 
   async existUser(account: string): Promise<number> {
@@ -225,11 +228,11 @@ export class TtalkService {
     const { user_account, friend_account } = info;
 
     try {
-      const query = await this.TTalkUserConcatRepository.query(
+      await this.TTalkUserConcatRepository.query(
         `UPDATE ttalk_user_concat SET friend_flag='${true}' where friend_flag = '${user_account}' and user_account = '${friend_account}'`,
       );
 
-      this.TTalkUserConcatRepository.save({
+      await this.TTalkUserConcatRepository.save({
         user_account: user_account,
         friend_account: friend_account,
         friend_flag: true,
@@ -244,11 +247,55 @@ export class TtalkService {
         code: 200,
         msg: '申请成功',
       };
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
   // ================================
 
   /**
-   * 加载信息
+   * 加载用户的登录状态
    */
+
+  async loadAccountStatus(data: checkOnlineDto, _ip: string) {
+    if (data.type === 'get' && Array.isArray(data.to_account)) {
+      const status = [];
+
+      for (let i = 0; i < data.to_account.length; i++) {
+        const userStatus = {};
+        const lineRes = await this.TTalkOnlineRepository.find({
+          where: {
+            account: data.to_account[i],
+            onlineFlag: true,
+          },
+          order: {
+            update_time: 'desc',
+          },
+        });
+
+        if (lineRes.length > 0) {
+          userStatus['account'] = data.to_account[i];
+          userStatus['status'] = 'online';
+        } else {
+          userStatus['account'] = data.to_account[i];
+          userStatus['status'] = 'offline';
+        }
+
+        status.push(userStatus);
+      }
+
+      return {
+        code: 200,
+        msg: '在线登录',
+        status: 'ok',
+        account_status: status,
+      };
+    }
+
+    return {
+      code: 400,
+      msg: '获取失败',
+      status: 'fail',
+    };
+  }
 }

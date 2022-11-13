@@ -359,6 +359,14 @@
     "ajv-formats" "^2.1.1"
     "fast-uri" "^2.0.0"
 
+"@fastify/cookie@^8.3.0":
+  "integrity" "sha512-P9hY9GO11L20TnZ33XN3i0bt+3x0zaT7S0ohAzWO950E9PB2xnNhLYzPFJIGFi5AVN0yr5+/iZhWxeYvR6KCzg=="
+  "resolved" "https://registry.npmmirror.com/@fastify/cookie/-/cookie-8.3.0.tgz"
+  "version" "8.3.0"
+  dependencies:
+    "cookie" "^0.5.0"
+    "fastify-plugin" "^4.0.0"
+
 "@fastify/cors@8.1.1":
   "integrity" "sha512-YpkNonoJtn7Zcq2uyh0bFPcjW+njWZ9rz5gl8o5NDUvpBIPjg5m/3IHvsq91Pp/fFhLL7XgVOUyk+gMl8tb5FQ=="
   "resolved" "https://registry.npmjs.org/@fastify/cors/-/cors-8.1.1.tgz"
