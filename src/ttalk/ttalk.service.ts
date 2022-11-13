@@ -122,10 +122,10 @@ export class TtalkService {
    */
 
   async updateInfo(data: UpdateDto, ip: string) {
-    const { account, nickname, bird_date, social, motto } = data;
+    const { account, nickname, bird_date, social, motto, avatar } = data;
     try {
       await this.TTalkUserRepository.query(
-        `UPDATE ttalk_user SET  nickname='${nickname}', bird_date='${bird_date}', social='${social}', motto='${motto}', ip='${ip}'  WHERE account='${account}'`,
+        `UPDATE ttalk_user SET  nickname='${nickname}', bird_date='${bird_date}', social='${social}', motto='${motto}', avatar = '${avatar}', ip='${ip}'  WHERE account='${account}'`,
       );
 
       return { code: 200, status: 'ok', msg: '更新成功' };
@@ -140,7 +140,7 @@ export class TtalkService {
   async searchUser(name: string) {
     try {
       const res: any = await this.TTalkUserRepository.query(
-        `SELECT nickname, motto , account, avatar FROM ttalk_user WHERE account = '${name}'`,
+        `SELECT nickname, motto , account, avatar FROM ttalk_user,add_time WHERE account = '${name}'`,
       );
       if (res.length > 0) {
         return {

@@ -15,4 +15,7 @@ export class UpdateDto {
 
   @IsNotEmpty()
   motto: string;
+
+  @IsNotEmpty()
+  avatar: string;
 }
