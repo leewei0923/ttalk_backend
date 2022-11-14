@@ -5,7 +5,7 @@ import { encryptPassword, makeSalt } from '../utils/cryptogram';
 import { ttalk_user } from './entities/ttalk.entity.mysql';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateDto } from './dto/update.dto';
-import { AddFriendDto, checkOnlineDto } from './dto/ttalk.dto';
+import { AddFriendDto, checkOnlineDto, getAndUpdateDto } from './dto/ttalk.dto';
 import { ttalk_user_concat } from './entities/user_concat.entity.mysql';
 import dayjs from 'dayjs';
 import { ttalk_online } from './entities/online.entity.mysql';
@@ -32,6 +32,7 @@ export class TtalkService {
   async register(data: RegisterDto, ip: string) {
     // 检查是否存在已有的账号
     const userCount = await this.existUser(data.account);
+    const curDate = dayjs().format('YYYY-MM-DD HH:mm');
 
     if (userCount >= 1) {
       return {
@@ -48,6 +49,8 @@ export class TtalkService {
       password: encryptPassword(data.password, salt),
       salt: salt,
       ip: ip,
+      add_time: curDate,
+      update_time: curDate,
     });
 
     return {
@@ -123,9 +126,11 @@ export class TtalkService {
 
   async updateInfo(data: UpdateDto, ip: string) {
     const { account, nickname, bird_date, social, motto, avatar } = data;
+
+    const curTime = dayjs().format('YYYY-MM-DD HH:mm');
     try {
       await this.TTalkUserRepository.query(
-        `UPDATE ttalk_user SET  nickname='${nickname}', bird_date='${bird_date}', social='${social}', motto='${motto}', avatar = '${avatar}', ip='${ip}'  WHERE account='${account}'`,
+        `UPDATE ttalk_user SET  nickname='${nickname}', bird_date='${bird_date}', social='${social}', motto='${motto}', avatar = '${avatar}', ip='${ip}', update_time = '${curTime}'  WHERE account='${account}'`,
       );
 
       return { code: 200, status: 'ok', msg: '更新成功' };
@@ -140,7 +145,7 @@ export class TtalkService {
   async searchUser(name: string) {
     try {
       const res: any = await this.TTalkUserRepository.query(
-        `SELECT nickname, motto , account, avatar FROM ttalk_user,add_time WHERE account = '${name}'`,
+        `SELECT nickname, motto , account, avatar FROM ttalk_user WHERE account = '${name}'`,
       );
       if (res.length > 0) {
         return {
@@ -156,7 +161,9 @@ export class TtalkService {
           msg: '没有找到该用户',
         };
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log('查找出错', error);
+    }
   }
 
   /**
@@ -196,7 +203,7 @@ export class TtalkService {
 
     try {
       if (searchUser.length <= 0) {
-        this.TTalkUserConcatRepository.save({
+        await this.TTalkUserConcatRepository.save({
           user_account: user_account,
           friend_account: friend_account,
           add_time: curDate,
@@ -207,6 +214,7 @@ export class TtalkService {
           blacklist: false,
           tags: tags,
           ip: ip,
+          type: 'apply',
         });
       } else {
         const query = `UPDATE ttalk_user_concat SET update_time = '${curDate}', verifyInformation = '${verifyInformation}', remark = '${remark}', tags = '${tags}' where id = '${searchUser[0].id}' and user_account = '${searchUser[0].user_account}' `;
@@ -225,11 +233,12 @@ export class TtalkService {
   }
 
   async #addFriendAccept(info: AddFriendDto) {
-    const { user_account, friend_account } = info;
+    const { user_account, friend_account, remark } = info;
+    const curDate = dayjs().format('YYYY-MM-DD HH:mm');
 
     try {
       await this.TTalkUserConcatRepository.query(
-        `UPDATE ttalk_user_concat SET friend_flag='${true}' where friend_flag = '${user_account}' and user_account = '${friend_account}'`,
+        `UPDATE ttalk_user_concat SET friend_flag = true where friend_account = '${user_account}' and user_account = '${friend_account}'`,
       );
 
       await this.TTalkUserConcatRepository.save({
@@ -237,9 +246,12 @@ export class TtalkService {
         friend_account: friend_account,
         friend_flag: true,
         verifyInformation: '',
-        remark: '',
+        remark: remark,
         blacklist: false,
         tags: '',
+        add_time: curDate,
+        update_time: curDate,
+        type: 'accept',
       });
 
       return {
@@ -297,5 +309,28 @@ export class TtalkService {
       msg: '获取失败',
       status: 'fail',
     };
+  }
+
+  /**
+   * 根据更新时间和账号更新账户信息
+   */
+
+  async getAndUpdateAccountInfo(data: getAndUpdateDto) {
+    const { account, update_time } = data;
+
+    try {
+      const queryStr = `SELECT account, nickname, bird_date, social, motto, add_time, update_time FROM ttalk_user WHERE account = '${account}' AND update_time > '${update_time}'`;
+
+      const userInfo = await this.TTalkUserRepository.query(queryStr);
+
+      if (userInfo) {
+        return {
+          status: 'ok',
+          code: 200,
+          msg: '申请成功',
+          userInfoData: userInfo,
+        };
+      }
+    } catch (error) {}
   }
 }

@@ -34,4 +34,7 @@ export class ttalk_user_concat {
 
   @Column()
   ip: string;
+
+  @Column()
+  type: 'accept' | 'apply'; // 2022-11-14
 }

@@ -36,3 +36,17 @@ export class checkOnlineDto {
   @IsNotEmpty()
   to_account: string[];
 }
+
+/**
+ * 根据更新时间和账号更新账户信息
+ * 2022-11-14
+ */
+
+export class getAndUpdateDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  account: string;
+
+  @IsNotEmpty()
+  update_time: string;
+}

@@ -18,4 +18,7 @@ export class UpdateDto {
 
   @IsNotEmpty()
   avatar: string;
+
+  @IsNotEmpty()
+  update_time: string;
 }

@@ -91,7 +91,6 @@ export class EventsGateway {
         },
       }).then((res) => {
         if (typeof res === 'object' && res?.online_id) {
-          console.log('运行');
           this.TTalkOnlineRepository.query(
             `UPDATE ttalk_online SET onlineFlag = false WHERE account = '${account}' and online_id = '${res.online_id}'`,
           );
@@ -142,7 +141,6 @@ export class EventsGateway {
           update_time: true,
           friend_flag: true,
           verifyInformation: true,
-          remark: true,
           blacklist: true,
           tags: true,
           ip: true,
@@ -175,7 +173,7 @@ export class EventsGateway {
 
       // 查找基础信息
       const userRes: any = await this.TTalkUserRepository.query(
-        `SELECT id, social, ip,  nickname, motto , account, avatar, bird_date FROM ttalk_user WHERE account = '${user_account}'`,
+        `SELECT id, social, ip,  nickname, motto , account, avatar, bird_date, add_time, update_time FROM ttalk_user WHERE account = '${user_account}'`,
       );
 
       this.server.to(online.online_id).emit('addFriend', {

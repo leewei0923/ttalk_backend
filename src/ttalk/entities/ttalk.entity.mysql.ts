@@ -37,4 +37,7 @@ export class ttalk_user {
 
   @Column()
   ip: string;
+
+  @Column()
+  update_time: string; // 2022-11-14
 }
