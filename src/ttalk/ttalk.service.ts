@@ -9,6 +9,8 @@ import { AddFriendDto, checkOnlineDto, getAndUpdateDto } from './dto/ttalk.dto';
 import { ttalk_user_concat } from './entities/user_concat.entity.mysql';
 import dayjs from 'dayjs';
 import { ttalk_online } from './entities/online.entity.mysql';
+import { SaveMessageDto, updateFlagDto } from './dto/message.dto';
+import { message_record } from './entities/message_record.entity.mysql';
 
 @Injectable()
 export class TtalkService {
@@ -20,6 +22,8 @@ export class TtalkService {
     private TTalkUserConcatRepository: Repository<ttalk_user_concat>,
     @Inject('TTALK_ONLINE_REPOSITORY')
     private TTalkOnlineRepository: Repository<ttalk_online>,
+    @Inject('MESSAGE_RECORD_REPOSITORY')
+    private MessageRecordRepository: Repository<message_record>,
   ) {}
 
   async existUser(account: string): Promise<number> {
@@ -269,6 +273,7 @@ export class TtalkService {
    * 加载用户的登录状态
    */
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async loadAccountStatus(data: checkOnlineDto, _ip: string) {
     if (data.type === 'get' && Array.isArray(data.to_account)) {
       const status = [];
@@ -332,5 +337,57 @@ export class TtalkService {
         };
       }
     } catch (error) {}
+  }
+
+  /**
+   * 保存用户消息
+   */
+
+  saveFriendMessage(data: SaveMessageDto) {
+    const {
+      user_account,
+      friend_account,
+      mood_state,
+      message,
+      message_style,
+      read_flag,
+    } = data;
+
+    const curDate = dayjs().format('YYYY-MM-DD HH:mm');
+
+    this.MessageRecordRepository.save({
+      user_account,
+      friend_account,
+      mood_state,
+      message,
+      message_style,
+      create_time: curDate,
+      read_flag,
+    }).catch((err) => {
+      console.log('出错', err);
+    });
+
+    return {
+      status: 'ok',
+      code: '200',
+      msg: '保存成功',
+    };
+  }
+
+  /**
+   * 更新阅读状态
+   */
+  async updateReadFlag(data: updateFlagDto) {
+    const { id, user_account, friend_account } = data;
+
+    if (Array.isArray(id)) {
+      for (let i = 0; i < id.length; i++) {
+        const queryCode = `UPDATE message_record SET read_flag = 'true' WHERE user_account = '${user_account}' AND friend_account = '${friend_account}' AND id = '${id[i]}'`;
+        this.MessageRecordRepository.query(queryCode);
+      }
+    } else {
+      const queryCode = `UPDATE message_record SET read_flag = 'true' WHERE user_account = '${user_account}' AND friend_account = '${friend_account}' AND id = '${id}'`;
+      this.MessageRecordRepository.query(queryCode);
+    }
   }
 }

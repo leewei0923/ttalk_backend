@@ -6,6 +6,7 @@ import { TtalkService } from './ttalk.service';
 import { UpdateDto } from './dto/update.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AddFriendDto, checkOnlineDto, getAndUpdateDto } from './dto/ttalk.dto';
+import { SaveMessageDto, updateFlagDto } from './dto/message.dto';
 
 @Controller('/server/ttalk')
 export class TtalkController {
@@ -116,5 +117,22 @@ export class TtalkController {
   @Post('/getAndUpdateInfo')
   getAndUpdateUserIfo(@Body() data: getAndUpdateDto) {
     return this.ttalkService.getAndUpdateAccountInfo(data);
+  }
+
+  /** 消息存储 */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/saveNewMessage')
+  saveNewMessage(@Body() data: SaveMessageDto) {
+    return this.ttalkService.saveFriendMessage(data);
+  }
+
+  /**
+   * 更新阅读状态
+   */
+  /** 获取消息存储 */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/updateMessageFlag')
+  updateMessageFlag(@Body() data: updateFlagDto) {
+    return this.ttalkService.updateReadFlag(data);
   }
 }
