@@ -50,3 +50,19 @@ export class getAndUpdateDto {
   @IsNotEmpty()
   update_time: string;
 }
+
+/**
+ * 拉入黑名单
+ */
+
+export class PullInBlacklist {
+  @ApiProperty()
+  @IsNotEmpty()
+  user_account: string; // 申请人账号
+
+  @IsNotEmpty()
+  friend_account: string; // 被申请人账号
+
+  @IsNotEmpty()
+  blacklist?: boolean;
+}

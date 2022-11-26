@@ -5,7 +5,12 @@ import { RegisterDto } from './dto/register.dto';
 import { TtalkService } from './ttalk.service';
 import { UpdateDto } from './dto/update.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { AddFriendDto, checkOnlineDto, getAndUpdateDto } from './dto/ttalk.dto';
+import {
+  AddFriendDto,
+  checkOnlineDto,
+  getAndUpdateDto,
+  PullInBlacklist,
+} from './dto/ttalk.dto';
 import { SaveMessageDto, updateFlagDto } from './dto/message.dto';
 
 @Controller('/server/ttalk')
@@ -134,5 +139,39 @@ export class TtalkController {
   @Post('/updateMessageFlag')
   updateMessageFlag(@Body() data: updateFlagDto) {
     return this.ttalkService.updateReadFlag(data);
+  }
+
+  /**
+   * 更新黑名单信息
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/updateConcatBlacklist')
+  updateConcatBlacklist(@Body() data: PullInBlacklist) {
+    if (typeof data.blacklist === 'boolean') {
+      return this.ttalkService.pullIntoBlacklist(data);
+    } else {
+      return {
+        code: 400,
+        status: 'fail',
+        msg: '更新状态失败',
+      };
+    }
+  }
+
+  /**
+   * 更新黑名单信息
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/deleteFriend')
+  updateConcatFriendFlag(@Body() data: PullInBlacklist) {
+    if (typeof data.blacklist === 'boolean') {
+      return this.ttalkService.DeleteFriend(data);
+    } else {
+      return {
+        code: 400,
+        status: 'fail',
+        msg: '更新状态失败',
+      };
+    }
   }
 }

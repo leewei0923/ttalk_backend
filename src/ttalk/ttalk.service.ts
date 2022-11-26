@@ -5,7 +5,12 @@ import { encryptPassword, makeSalt } from '../utils/cryptogram';
 import { ttalk_user } from './entities/ttalk.entity.mysql';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateDto } from './dto/update.dto';
-import { AddFriendDto, checkOnlineDto, getAndUpdateDto } from './dto/ttalk.dto';
+import {
+  AddFriendDto,
+  checkOnlineDto,
+  getAndUpdateDto,
+  PullInBlacklist,
+} from './dto/ttalk.dto';
 import { ttalk_user_concat } from './entities/user_concat.entity.mysql';
 import dayjs from 'dayjs';
 import { ttalk_online } from './entities/online.entity.mysql';
@@ -389,5 +394,65 @@ export class TtalkService {
       const queryCode = `UPDATE message_record SET read_flag = 'true' WHERE user_account = '${user_account}' AND friend_account = '${friend_account}' AND id = '${id}'`;
       this.MessageRecordRepository.query(queryCode);
     }
+  }
+
+  /**
+   * 拉进黑名单
+   */
+  async pullIntoBlacklist(data: PullInBlacklist) {
+    const { user_account, friend_account } = data;
+
+    const concatRes = await this.TTalkUserConcatRepository.findOne({
+      where: {
+        user_account,
+        friend_account,
+      },
+    });
+
+    if (typeof concatRes === 'object') {
+      const queryCode = `UPDATE ttalk_user_concat SET blacklist = ${!concatRes.blacklist} WHERE user_account = '${user_account}' and friend_account = '${friend_account}'`;
+
+      this.TTalkUserConcatRepository.query(queryCode);
+    }
+
+    return {
+      code: 200,
+      status: 'ok',
+      msg: '更新状态成功',
+      info: {
+        friend_account,
+        blacklist_status: !concatRes.blacklist,
+      },
+    };
+  }
+
+  /**
+   * 删除好友
+   */
+  async DeleteFriend(data: PullInBlacklist) {
+    const { user_account, friend_account } = data;
+
+    const concatRes = await this.TTalkUserConcatRepository.findOne({
+      where: {
+        user_account,
+        friend_account,
+      },
+    });
+
+    if (typeof concatRes === 'object') {
+      const queryCode = `DELETE ttalk_user_concat SET friend_flag = ${!concatRes.friend_flag} WHERE user_account = '${user_account}' and friend_account = '${friend_account}'`;
+
+      this.TTalkUserConcatRepository.query(queryCode);
+    }
+
+    return {
+      code: 200,
+      status: 'ok',
+      msg: '更新状态成功',
+      info: {
+        friend_account,
+        friend_status: !concatRes.friend_flag,
+      },
+    };
   }
 }
