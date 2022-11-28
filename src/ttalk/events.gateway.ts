@@ -15,7 +15,6 @@ import { SaveMessageDto } from './dto/message.dto';
 import { message_record } from './entities/message_record.entity.mysql';
 import { offline_events_record } from './entities/offline_events_record.entity.mysql';
 import { OfflineEventsName } from './types';
-import { nanoid } from 'nanoid';
 
 @WebSocketGateway(3102, { cors: true })
 export class EventsGateway {
@@ -249,6 +248,7 @@ export class EventsGateway {
   @SubscribeMessage('messaging')
   async handleMessing(client: Socket, payload: SaveMessageDto) {
     const {
+      remote_id,
       user_account,
       friend_account,
       message,
@@ -257,7 +257,6 @@ export class EventsGateway {
       read_flag,
     } = payload;
     const curDate = dayjs().format('YYYY-MM-DD HH:mm');
-    const message_id = nanoid();
 
     // 先查询是否在线,在线将信息存入数据库,然后把信息发送给朋友
     // 离线状态,保存数据,将信息存入离线记录
@@ -280,7 +279,7 @@ export class EventsGateway {
             mood_state: payload.mood_state,
             message_style: payload.message_style,
             read_flag: payload.read_flag,
-            message_id,
+            message_id: remote_id,
             create_time: curDate,
             update_time: curDate,
           };
@@ -301,7 +300,7 @@ export class EventsGateway {
 
     // 将信息存入数据库
     this.MessageRecordRepository.save({
-      message_id,
+      message_id: remote_id,
       user_account,
       friend_account,
       mood_state,
@@ -344,16 +343,17 @@ export class EventsGateway {
       }
 
       // 如果查找到已经存在的消息，更新update否则更新时间
-      if (typeof res !== 'object') {
+      if (res === null) {
         this.EventRecordRepository.save({
           user_account,
           friend_account,
           event_type: event,
           create_time: curDate,
           update_time: curDate,
+          end_flag: false,
         });
       } else {
-        const queryCode = `UPDATE offline_events_record SET update_time = ${curDate} where user_account = '${res.user_account}' AND friend_account = '${res.friend_account}' AND id = '${res.id}'`;
+        const queryCode = `UPDATE offline_events_record SET update_time = '${curDate}' where user_account = '${res.user_account}' AND friend_account = '${res.friend_account}' AND id = '${res.id}'`;
         this.EventRecordRepository.query(queryCode);
       }
     });

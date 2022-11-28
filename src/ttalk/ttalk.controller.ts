@@ -9,6 +9,7 @@ import {
   AddFriendDto,
   checkOnlineDto,
   getAndUpdateDto,
+  LoadLatestMessageDto,
   PullInBlacklist,
 } from './dto/ttalk.dto';
 import { SaveMessageDto, updateFlagDto } from './dto/message.dto';
@@ -173,5 +174,23 @@ export class TtalkController {
         msg: '更新状态失败',
       };
     }
+  }
+
+  /**
+   * 加载事件
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/loadLatestEvents')
+  loadLatestEvents(@Body() data: { account: string }) {
+    return this.ttalkService.loadLatestEvent(data.account);
+  }
+
+  /**
+   * 加载最新消息
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/loadLatestMessages')
+  loadLatestMessages(@Body() data: LoadLatestMessageDto) {
+    return this.ttalkService.loadLatestMessage(data);
   }
 }

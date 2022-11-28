@@ -66,3 +66,19 @@ export class PullInBlacklist {
   @IsNotEmpty()
   blacklist?: boolean;
 }
+
+/**
+ * 查找用户的信息
+ */
+
+export class LoadLatestMessageDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  user_account: string; // 申请人账号
+
+  @IsNotEmpty()
+  friend_account: string; // 被申请人账号
+
+  @IsNotEmpty()
+  create_time: string;
+}

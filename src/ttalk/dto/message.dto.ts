@@ -4,6 +4,9 @@ import { IsNotEmpty } from 'class-validator';
 export class SaveMessageDto {
   @ApiProperty({ example: '' })
   @IsNotEmpty()
+  remote_id: string;
+
+  @IsNotEmpty()
   user_account: string;
 
   @IsNotEmpty()

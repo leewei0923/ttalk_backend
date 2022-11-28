@@ -9,6 +9,7 @@ import {
   AddFriendDto,
   checkOnlineDto,
   getAndUpdateDto,
+  LoadLatestMessageDto,
   PullInBlacklist,
 } from './dto/ttalk.dto';
 import { ttalk_user_concat } from './entities/user_concat.entity.mysql';
@@ -16,6 +17,7 @@ import dayjs from 'dayjs';
 import { ttalk_online } from './entities/online.entity.mysql';
 import { SaveMessageDto, updateFlagDto } from './dto/message.dto';
 import { message_record } from './entities/message_record.entity.mysql';
+import { offline_events_record } from './entities/offline_events_record.entity.mysql';
 
 @Injectable()
 export class TtalkService {
@@ -29,6 +31,8 @@ export class TtalkService {
     private TTalkOnlineRepository: Repository<ttalk_online>,
     @Inject('MESSAGE_RECORD_REPOSITORY')
     private MessageRecordRepository: Repository<message_record>,
+    @Inject('OFFLINE_EVENTS_RECORD_REPOSITORY')
+    private OfflineEventRecordRepository: Repository<offline_events_record>,
   ) {}
 
   async existUser(account: string): Promise<number> {
@@ -453,6 +457,48 @@ export class TtalkService {
         friend_account,
         friend_status: !concatRes.friend_flag,
       },
+    };
+  }
+
+  /**
+   * 加载最新的事件
+   */
+
+  async loadLatestEvent(account: string) {
+    const res = await this.OfflineEventRecordRepository.find({
+      where: {
+        friend_account: account,
+        end_flag: false,
+      },
+    });
+
+    const queryCode = `UPDATE offline_events_record SET end_flag = true WHERE friend_account = '${account}'`;
+
+    this.OfflineEventRecordRepository.query(queryCode);
+
+    return {
+      code: 200,
+      msg: '加载成功',
+      status: 'ok',
+      info: res,
+    };
+  }
+
+  /**
+   * 加载最新消息
+   */
+
+  async loadLatestMessage(data: LoadLatestMessageDto) {
+    const { user_account, friend_account, create_time } = data;
+
+    const queryCode = `SELECT message_id, user_account, friend_account, mood_state, message_style, message, create_time, read_flag FROM  message_record WHERE user_account = '${user_account}' AND friend_account = '${friend_account}' AND create_time >= '${create_time}'`;
+    const res = await this.MessageRecordRepository.query(queryCode);
+
+    return {
+      code: 200,
+      msg: '加载成功',
+      status: 'ok',
+      info: res,
     };
   }
 }
