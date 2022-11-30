@@ -334,16 +334,32 @@ export class TtalkService {
     const { account, update_time } = data;
 
     try {
-      const queryStr = `SELECT account, nickname, bird_date, social, motto, add_time, update_time FROM ttalk_user WHERE account = '${account}' AND update_time > '${update_time}'`;
+      const queryStr = `SELECT account,avatar, nickname, bird_date, social, motto, add_time, update_time FROM ttalk_user WHERE account = '${account}'`;
 
       const userInfo = await this.TTalkUserRepository.query(queryStr);
 
       if (userInfo) {
+        if (userInfo[0].update_time !== update_time) {
+          return {
+            status: 'ok',
+            code: 200,
+            msg: '申请成功',
+            userInfoData: userInfo,
+          };
+        } else {
+          return {
+            status: 'fail',
+            code: 400,
+            msg: '不需要更新',
+            userInfoData: [],
+          };
+        }
+      } else {
         return {
-          status: 'ok',
-          code: 200,
-          msg: '申请成功',
-          userInfoData: userInfo,
+          status: 'fail',
+          code: 400,
+          msg: '不需要更新',
+          userInfoData: [],
         };
       }
     } catch (error) {}
