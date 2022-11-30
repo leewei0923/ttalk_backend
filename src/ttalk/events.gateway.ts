@@ -11,7 +11,7 @@ import { ttalk_online } from './entities/online.entity.mysql';
 import { ttalk_user } from './entities/ttalk.entity.mysql';
 import { ttalk_user_concat } from './entities/user_concat.entity.mysql';
 import { addFriendType } from 'src/types';
-import { SaveMessageDto } from './dto/message.dto';
+import { readFeedbackDto, SaveMessageDto } from './dto/message.dto';
 import { message_record } from './entities/message_record.entity.mysql';
 import { offline_events_record } from './entities/offline_events_record.entity.mysql';
 import { OfflineEventsName } from './types';
@@ -323,8 +323,11 @@ export class EventsGateway {
     friend_account: string,
     event: OfflineEventsName,
     end_flag?: boolean,
+    event_detail?: string,
   ) {
     const curDate = dayjs().format('YYYY-MM-DD HH:mm');
+
+    console.log(user_account, friend_account, event, end_flag, event_detail);
 
     this.EventRecordRepository.findOne({
       where: {
@@ -351,11 +354,72 @@ export class EventsGateway {
           create_time: curDate,
           update_time: curDate,
           end_flag: false,
+          event_detail,
         });
       } else {
-        const queryCode = `UPDATE offline_events_record SET update_time = '${curDate}' where user_account = '${res.user_account}' AND friend_account = '${res.friend_account}' AND id = '${res.id}'`;
+        let newObj = event_detail;
+        console.log(res);
+        if (typeof event_detail === 'string') {
+          const obj: any = JSON.parse(event_detail);
+          const obj2: any = JSON.parse(res.event_detail);
+
+          if (obj.type === 'read' && obj2.type === 'read') {
+            obj2.message_id.push(...obj.message_id);
+            newObj = JSON.stringify(obj2);
+          }
+        }
+
+        const queryCode = `UPDATE offline_events_record SET update_time = '${curDate}', event_detail = '${newObj}' where user_account = '${res.user_account}' AND friend_account = '${res.friend_account}' AND id = '${res.id}'`;
         this.EventRecordRepository.query(queryCode);
       }
     });
+  }
+
+  /**
+   * 阅读消息反馈
+   */
+  @SubscribeMessage('read')
+  async handleReadFeedback(client: Socket, payload: readFeedbackDto) {
+    /**
+     * 消息接收方(friend_account)发送阅读反馈给消息的发送方(user_account),消息接收方在本地更改阅读反馈的同时,
+     * 也发送到服务器,通知消息发送方更改,如果是离线加入离线事件,在线直接通过socket.
+     */
+
+    const { send_account, receive_account, remote_id } = payload;
+
+    const queryCode = `UPDATE message_record SET read_flag = true WHERE message_id = '${remote_id}' AND user_account = '${receive_account}' AND friend_account = '${send_account}'`;
+    this.MessageRecordRepository.query(queryCode);
+
+    // 发送反馈给消息发送方
+    const onlineFriendRes = await this.TTalkOnlineRepository.find({
+      where: {
+        account: receive_account,
+        onlineFlag: true,
+      },
+    });
+
+    // 在线
+    if (onlineFriendRes.length > 0) {
+      this.server.to(onlineFriendRes[0].online_id).emit('read', {
+        send_account,
+        receive_account,
+        message_ids: payload.remote_id,
+      });
+    } else {
+      const messList = {
+        type: 'read',
+        message_id: [],
+      };
+      messList.message_id.push(payload.remote_id);
+      console.log(messList);
+
+      this.offlineEventsSave(
+        send_account,
+        receive_account,
+        OfflineEventsName.READ,
+        undefined,
+        JSON.stringify(messList),
+      );
+    }
   }
 }

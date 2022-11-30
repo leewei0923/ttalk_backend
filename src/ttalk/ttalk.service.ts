@@ -10,6 +10,7 @@ import {
   checkOnlineDto,
   getAndUpdateDto,
   LoadLatestMessageDto,
+  LoadUnReadDto,
   PullInBlacklist,
 } from './dto/ttalk.dto';
 import { ttalk_user_concat } from './entities/user_concat.entity.mysql';
@@ -499,6 +500,43 @@ export class TtalkService {
       msg: '加载成功',
       status: 'ok',
       info: res,
+    };
+  }
+
+  /**
+   * 加载所有未读消息,并重置为已读消息
+   */
+  async updateReadFlag2(data: LoadUnReadDto) {
+    const { receive_account, send_account } = data;
+    // 此处 send_account 为 friend_account
+
+    const resObj = {
+      send_account, // 对于接收方来说是friend
+      receive_account,
+      message_ids: [],
+    };
+
+    const unReadRes = await this.MessageRecordRepository.find({
+      where: {
+        user_account: send_account,
+        friend_account: receive_account,
+        read_flag: false,
+      },
+    });
+
+    if (Array.isArray(unReadRes) && unReadRes.length > 0) {
+      for (let i = 0; i < unReadRes.length; i++) {
+        resObj.message_ids.push(unReadRes[i].message_id);
+        const queryMessageCode = `UPDATE message_record SET read_flag = true WHERE friend_account = '${unReadRes[i].friend_account}' AND message_id = '${unReadRes[i].message_id}'`;
+        this.MessageRecordRepository.query(queryMessageCode);
+      }
+    }
+
+    return {
+      code: 200,
+      msg: '加载成功',
+      status: 'ok',
+      info: resObj,
     };
   }
 }

@@ -22,4 +22,7 @@ export class offline_events_record {
 
   @Column()
   end_flag: boolean;
+
+  @Column()
+  event_detail?: string;
 }

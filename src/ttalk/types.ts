@@ -6,4 +6,5 @@ export enum OfflineEventsName {
   MESSAGING = 'messaging',
   ACCEPT = 'accept',
   APPLY = 'apply',
+  READ = 'read',
 }

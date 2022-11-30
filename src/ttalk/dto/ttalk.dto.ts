@@ -82,3 +82,12 @@ export class LoadLatestMessageDto {
   @IsNotEmpty()
   create_time: string;
 }
+
+export class LoadUnReadDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  send_account: string; // 申请人账号
+
+  @IsNotEmpty()
+  receive_account: string; // 被申请人账号
+}

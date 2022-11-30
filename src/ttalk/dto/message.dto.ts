@@ -36,3 +36,14 @@ export class updateFlagDto {
   @IsNotEmpty()
   friend_account: string;
 }
+
+export class readFeedbackDto {
+  @IsNotEmpty()
+  remote_id: string;
+
+  @IsNotEmpty()
+  send_account: string;
+
+  @IsNotEmpty()
+  receive_account: string;
+}

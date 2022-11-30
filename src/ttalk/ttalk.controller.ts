@@ -10,6 +10,7 @@ import {
   checkOnlineDto,
   getAndUpdateDto,
   LoadLatestMessageDto,
+  LoadUnReadDto,
   PullInBlacklist,
 } from './dto/ttalk.dto';
 import { SaveMessageDto, updateFlagDto } from './dto/message.dto';
@@ -192,5 +193,14 @@ export class TtalkController {
   @Post('/loadLatestMessages')
   loadLatestMessages(@Body() data: LoadLatestMessageDto) {
     return this.ttalkService.loadLatestMessage(data);
+  }
+
+  /**
+   * 更改阅读标记
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/updateReadFlag')
+  updateReadFlag(@Body() data: LoadUnReadDto) {
+    return this.ttalkService.updateReadFlag2(data);
   }
 }
