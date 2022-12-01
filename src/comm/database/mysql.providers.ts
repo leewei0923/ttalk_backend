@@ -6,6 +6,7 @@ import { ttalk_user_concat } from 'src/ttalk/entities/user_concat.entity.mysql';
 import { ttalk_online } from 'src/ttalk/entities/online.entity.mysql';
 import { message_record } from 'src/ttalk/entities/message_record.entity.mysql';
 import { offline_events_record } from 'src/ttalk/entities/offline_events_record.entity.mysql';
+import { collect_record } from 'src/ttalk/entities/collect_record.entity.mysql';
 
 /**
  * Mysql 数据库
@@ -27,6 +28,7 @@ const MYSQL_DATABASE_CONFIG = {
     ttalk_online,
     message_record,
     offline_events_record,
+    collect_record,
   ],
 };
 

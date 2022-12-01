@@ -14,6 +14,11 @@ import {
   PullInBlacklist,
 } from './dto/ttalk.dto';
 import { SaveMessageDto, updateFlagDto } from './dto/message.dto';
+import {
+  DelectCollectDto,
+  InsetCollectDto,
+  UpdateCollectDto,
+} from './dto/collect.dto';
 
 @Controller('/server/ttalk')
 export class TtalkController {
@@ -202,5 +207,23 @@ export class TtalkController {
   @Post('/updateReadFlag')
   updateReadFlag(@Body() data: LoadUnReadDto) {
     return this.ttalkService.updateReadFlag2(data);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/insertCollect')
+  insertCollect(@Body() data: InsetCollectDto) {
+    return this.ttalkService.insertCollect(data);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/updateCollect')
+  updateCollect(@Body() data: UpdateCollectDto) {
+    return this.ttalkService.updateCollect(data);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/deleteCollect')
+  deleteCollect(@Body() data: DelectCollectDto) {
+    return this.ttalkService.deleteCollect(data);
   }
 }

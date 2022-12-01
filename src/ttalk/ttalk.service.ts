@@ -19,6 +19,12 @@ import { ttalk_online } from './entities/online.entity.mysql';
 import { SaveMessageDto, updateFlagDto } from './dto/message.dto';
 import { message_record } from './entities/message_record.entity.mysql';
 import { offline_events_record } from './entities/offline_events_record.entity.mysql';
+import { collect_record } from './entities/collect_record.entity.mysql';
+import {
+  DelectCollectDto,
+  InsetCollectDto,
+  UpdateCollectDto,
+} from './dto/collect.dto';
 
 @Injectable()
 export class TtalkService {
@@ -34,6 +40,8 @@ export class TtalkService {
     private MessageRecordRepository: Repository<message_record>,
     @Inject('OFFLINE_EVENTS_RECORD_REPOSITORY')
     private OfflineEventRecordRepository: Repository<offline_events_record>,
+    @Inject('COLLECT_RECORD_REPOSITORY')
+    private CollectRecordRepository: Repository<collect_record>,
   ) {}
 
   async existUser(account: string): Promise<number> {
@@ -553,6 +561,71 @@ export class TtalkService {
       msg: '加载成功',
       status: 'ok',
       info: resObj,
+    };
+  }
+
+  /**
+   * 增加收藏
+   */
+  insertCollect(collectData: InsetCollectDto) {
+    const curDate = dayjs().format('YYYY-MM-DD HH-mm');
+
+    const { collect_id, account, content, origin, type } = collectData;
+    this.CollectRecordRepository.save({
+      collect_id,
+      account,
+      content,
+      origin,
+      type,
+      create_time: curDate,
+      update_time: curDate,
+    });
+
+    return {
+      code: 200,
+      msg: '保存成功',
+      status: 'ok',
+    };
+  }
+  /**
+   * 删除收藏
+   */
+
+  deleteCollect(deleteData: DelectCollectDto) {
+    const { account, collect_id } = deleteData;
+    this.CollectRecordRepository.delete({
+      account,
+      collect_id,
+    }).catch((err) => {
+      console.log('删除出现错误', err);
+    });
+
+    return {
+      code: 200,
+      msg: '删除成功',
+      status: 'ok',
+    };
+  }
+
+  /**
+   * 更新收藏
+   */
+  updateCollect(updateData: UpdateCollectDto) {
+    const { account, collect_id, content } = updateData;
+    const curDate = dayjs().format('YYYY-MM-DD HH-mm');
+
+    this.CollectRecordRepository.update(
+      {
+        content,
+        update_time: curDate,
+      },
+      { account, collect_id },
+    );
+
+    return {
+      code: 200,
+      msg: '更新成功',
+      status: 'ok',
     };
   }
 }

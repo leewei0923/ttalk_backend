@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TtalkService } from './ttalk.service';
 import { TtalkController } from './ttalk.controller';
 import {
+  CollectRecordProviders,
   MessageRecordProviders,
   OfflineEventsProviders,
   TTalkOnlineProviders,
@@ -22,6 +23,7 @@ import { EventsGateway } from './events.gateway';
     ...TTalkOnlineProviders,
     ...MessageRecordProviders,
     ...OfflineEventsProviders,
+    ...CollectRecordProviders,
     EventsGateway,
   ],
 })

@@ -1,3 +1,4 @@
+import { collect_record } from './entities/collect_record.entity.mysql';
 import { message_record } from './entities/message_record.entity.mysql';
 import { offline_events_record } from './entities/offline_events_record.entity.mysql';
 import { ttalk_online } from './entities/online.entity.mysql';
@@ -45,6 +46,15 @@ export const OfflineEventsProviders = [
     provide: 'OFFLINE_EVENTS_RECORD_REPOSITORY',
     useFactory: async (AppDataSource) =>
       await AppDataSource.getRepository(offline_events_record),
+    inject: ['MYSQL_DATA_SOURCE'],
+  },
+];
+
+export const CollectRecordProviders = [
+  {
+    provide: 'COLLECT_RECORD_REPOSITORY',
+    useFactory: async (AppDataSource) =>
+      await AppDataSource.getRepository(collect_record),
     inject: ['MYSQL_DATA_SOURCE'],
   },
 ];
