@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { VersioningType, VERSION_NEUTRAL } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
@@ -12,6 +13,8 @@ import { AppModule } from './app.module';
 import { FastifyLogger } from './comm/logger';
 import fastify from 'fastify';
 import fastifyCookie from '@fastify/cookie';
+import { join } from 'path';
+import { contentParser } from 'fastify-file-interceptor';
 
 declare const module: any;
 
@@ -46,10 +49,16 @@ async function bootstrap() {
     module.hot.dispose(() => app.close());
   }
 
+  // 设置静态文件夹
+  app.useStaticAssets({
+    root: join(__dirname, '../file'),
+    prefix: '/static/',
+  });
   // 添加cookie
   app.register(fastifyCookie, {
     secret: 'ttalk_secret',
   });
+  app.register(contentParser);
 
   await app.listen(3001);
 }

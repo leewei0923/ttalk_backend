@@ -359,6 +359,13 @@
     "ajv-formats" "^2.1.1"
     "fast-uri" "^2.0.0"
 
+"@fastify/busboy@^1.0.0":
+  "integrity" "sha512-Fv854f94v0CzIDllbY3i/0NJPNBRNLDawf3BTYVGCe9VrIIs3Wi7AFx24F9NzCxdf0wyx/x0Q9kEVnvDOPnlxA=="
+  "resolved" "https://registry.npmmirror.com/@fastify/busboy/-/busboy-1.1.0.tgz"
+  "version" "1.1.0"
+  dependencies:
+    "text-decoding" "^1.0.0"
+
 "@fastify/cookie@^8.3.0":
   "integrity" "sha512-P9hY9GO11L20TnZ33XN3i0bt+3x0zaT7S0ohAzWO950E9PB2xnNhLYzPFJIGFi5AVN0yr5+/iZhWxeYvR6KCzg=="
   "resolved" "https://registry.npmmirror.com/@fastify/cookie/-/cookie-8.3.0.tgz"
@@ -2113,6 +2120,16 @@
     "readable-stream" "^2.2.2"
     "typedarray" "^0.0.6"
 
+"concat-stream@^2.0.0":
+  "integrity" "sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A=="
+  "resolved" "https://registry.npmmirror.com/concat-stream/-/concat-stream-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "buffer-from" "^1.0.0"
+    "inherits" "^2.0.3"
+    "readable-stream" "^3.0.2"
+    "typedarray" "^0.0.6"
+
 "consola@^2.15.0":
   "integrity" "sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw=="
   "resolved" "https://registry.npmjs.org/consola/-/consola-2.15.3.tgz"
@@ -2367,7 +2384,7 @@
   "resolved" "https://registry.npmjs.org/encodeurl/-/encodeurl-1.0.2.tgz"
   "version" "1.0.2"
 
-"end-of-stream@^1.1.0", "end-of-stream@^1.4.1":
+"end-of-stream@^1.1.0", "end-of-stream@^1.4.1", "end-of-stream@^1.4.4":
   "integrity" "sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q=="
   "resolved" "https://registry.npmjs.org/end-of-stream/-/end-of-stream-1.4.4.tgz"
   "version" "1.4.4"
@@ -2772,9 +2789,66 @@
     "fastify-cookie-deprecated" "npm:fastify-cookie@5.6.1"
     "process-warning" "^1.0.0"
 
+"fastify-error@^0.3.0":
+  "integrity" "sha512-oCfpcsDndgnDVgiI7bwFKAun2dO+4h84vBlkWsWnz/OUK9Reff5UFoFl241xTiLeHWX/vU9zkDVXqYUxjOwHcQ=="
+  "resolved" "https://registry.npmmirror.com/fastify-error/-/fastify-error-0.3.1.tgz"
+  "version" "0.3.1"
+
+"fastify-file-interceptor@^1.0.8":
+  "integrity" "sha512-y2tSnVEygW14AtGZO4CPhwbx3I8hiLZQJ51YNE+k8MjsTtOrMvmq5LXoTUoMuFyfvV7ioLu5bLHj8ZnK7MCFOQ=="
+  "resolved" "https://registry.npmmirror.com/fastify-file-interceptor/-/fastify-file-interceptor-1.0.8.tgz"
+  "version" "1.0.8"
+  dependencies:
+    "fastify-multer" "2.0.3"
+    "multer" "1.4.5-lts.1"
+    "tslib" "^2.2.0"
+
+"fastify-multer@^2.0.3", "fastify-multer@2.0.3":
+  "integrity" "sha512-QnFqrRgxmUwWHTgX9uyQSu0C/hmVCfcxopqjApZ4uaZD5W9MJ+nHUlW4+9q7Yd3BRxDIuHvgiM5mjrh6XG8cAA=="
+  "resolved" "https://registry.npmmirror.com/fastify-multer/-/fastify-multer-2.0.3.tgz"
+  "version" "2.0.3"
+  dependencies:
+    "@fastify/busboy" "^1.0.0"
+    "append-field" "^1.0.0"
+    "concat-stream" "^2.0.0"
+    "fastify-plugin" "^2.0.1"
+    "mkdirp" "^1.0.4"
+    "on-finished" "^2.3.0"
+    "type-is" "~1.6.18"
+    "xtend" "^4.0.2"
+
+"fastify-multipart-deprecated@npm:fastify-multipart@5.3.1":
+  "integrity" "sha512-c2pnGfkJmiNpYqzFYT2QfBg/06AxG531O+n1elqc8YUbWPRzufdqn3yfGAIV3RA7J4Vnf7Pfvgx0iaWqaRTOVA=="
+  "resolved" "https://registry.npmmirror.com/fastify-multipart/-/fastify-multipart-5.3.1.tgz"
+  "version" "5.3.1"
+  dependencies:
+    "@fastify/busboy" "^1.0.0"
+    "deepmerge" "^4.2.2"
+    "end-of-stream" "^1.4.4"
+    "fastify-error" "^0.3.0"
+    "fastify-plugin" "^3.0.0"
+    "hexoid" "^1.0.0"
+    "secure-json-parse" "^2.4.0"
+    "stream-wormhole" "^1.1.0"
+
+"fastify-multipart@^5.4.0":
+  "integrity" "sha512-Pafy4mtcuFUnFM/t0kgCdL854KIEoDymNVdv4nD7uBfV7lBCQq/NVEuNnaNXAbuCTpeXzYRzi50lSDa9ZM838A=="
+  "resolved" "https://registry.npmmirror.com/fastify-multipart/-/fastify-multipart-5.4.0.tgz"
+  "version" "5.4.0"
+  dependencies:
+    "fastify-multipart-deprecated" "npm:fastify-multipart@5.3.1"
+    "process-warning" "^1.0.0"
+
+"fastify-plugin@^2.0.1":
+  "integrity" "sha512-I+Oaj6p9oiRozbam30sh39BiuiqBda7yK2nmSPVwDCfIBlKnT8YB3MY+pRQc2Fcd07bf6KPGklHJaQ2Qu81TYQ=="
+  "resolved" "https://registry.npmmirror.com/fastify-plugin/-/fastify-plugin-2.3.4.tgz"
+  "version" "2.3.4"
+  dependencies:
+    "semver" "^7.3.2"
+
 "fastify-plugin@^3.0.0":
   "integrity" "sha512-qKcDXmuZadJqdTm6vlCqioEbyewF60b/0LOFCcYN1B6BIZGlYJumWWOYs70SFYLDAH4YqdE1cxH/RKMG7rFxgA=="
-  "resolved" "https://registry.npmjs.org/fastify-plugin/-/fastify-plugin-3.0.1.tgz"
+  "resolved" "https://registry.npmmirror.com/fastify-plugin/-/fastify-plugin-3.0.1.tgz"
   "version" "3.0.1"
 
 "fastify-plugin@^3.0.1":
@@ -3137,7 +3211,7 @@
   dependencies:
     "function-bind" "^1.1.1"
 
-"hexoid@1.0.0":
+"hexoid@^1.0.0", "hexoid@1.0.0":
   "integrity" "sha512-QFLV0taWQOZtvIRIAdBChesmogZrtuXvVWsFHZTk2SU+anspqZ2vMnoLg7IE1+Uk16N19APic1BuF8bC8c2m5g=="
   "resolved" "https://registry.npmjs.org/hexoid/-/hexoid-1.0.0.tgz"
   "version" "1.0.0"
@@ -4239,6 +4313,19 @@
     "type-is" "^1.6.4"
     "xtend" "^4.0.0"
 
+"multer@1.4.5-lts.1":
+  "integrity" "sha512-ywPWvcDMeH+z9gQq5qYHCCy+ethsk4goepZ45GLD63fOu0YcNecQxi64nDs3qluZB+murG3/D4dJ7+dGctcCQQ=="
+  "resolved" "https://registry.npmmirror.com/multer/-/multer-1.4.5-lts.1.tgz"
+  "version" "1.4.5-lts.1"
+  dependencies:
+    "append-field" "^1.0.0"
+    "busboy" "^1.0.0"
+    "concat-stream" "^1.5.2"
+    "mkdirp" "^0.5.4"
+    "object-assign" "^4.1.1"
+    "type-is" "^1.6.4"
+    "xtend" "^4.0.0"
+
 "mute-stream@0.0.8":
   "integrity" "sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA=="
   "resolved" "https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.8.tgz"
@@ -4360,7 +4447,7 @@
   "resolved" "https://registry.npmjs.org/on-exit-leak-free/-/on-exit-leak-free-2.1.0.tgz"
   "version" "2.1.0"
 
-"on-finished@2.4.1":
+"on-finished@^2.3.0", "on-finished@2.4.1":
   "integrity" "sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg=="
   "resolved" "https://registry.npmjs.org/on-finished/-/on-finished-2.4.1.tgz"
   "version" "2.4.1"
@@ -4805,6 +4892,15 @@
     "string_decoder" "~1.1.1"
     "util-deprecate" "~1.0.1"
 
+"readable-stream@^3.0.2":
+  "integrity" "sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA=="
+  "resolved" "https://registry.npmmirror.com/readable-stream/-/readable-stream-3.6.0.tgz"
+  "version" "3.6.0"
+  dependencies:
+    "inherits" "^2.0.3"
+    "string_decoder" "^1.1.1"
+    "util-deprecate" "^1.0.1"
+
 "readable-stream@^3.1.1":
   "integrity" "sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA=="
   "resolved" "https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.0.tgz"
@@ -5040,7 +5136,7 @@
     "ajv" "^6.12.5"
     "ajv-keywords" "^3.5.2"
 
-"secure-json-parse@^2.5.0":
+"secure-json-parse@^2.4.0", "secure-json-parse@^2.5.0":
   "integrity" "sha512-ZQruFgZnIWH+WyO9t5rWt4ZEGqCKPwhiw+YbzTwpmT9elgLrLcfuyUiSnwwjUiVy9r4VM3urtbNF1xmEh9IL2w=="
   "resolved" "https://registry.npmjs.org/secure-json-parse/-/secure-json-parse-2.5.0.tgz"
   "version" "2.5.0"
@@ -5060,7 +5156,7 @@
   "resolved" "https://registry.npmjs.org/semver/-/semver-6.3.0.tgz"
   "version" "6.3.0"
 
-"semver@^7.3.4", "semver@^7.3.5", "semver@^7.3.7", "semver@7.x":
+"semver@^7.3.2", "semver@^7.3.4", "semver@^7.3.5", "semver@^7.3.7", "semver@7.x":
   "integrity" "sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g=="
   "resolved" "https://registry.npmjs.org/semver/-/semver-7.3.7.tgz"
   "version" "7.3.7"
@@ -5303,6 +5399,11 @@
   "resolved" "https://registry.npmjs.org/stream-shift/-/stream-shift-1.0.1.tgz"
   "version" "1.0.1"
 
+"stream-wormhole@^1.1.0":
+  "integrity" "sha512-gHFfL3px0Kctd6Po0M8TzEvt3De/xu6cnRrjlfYNhwbhLPLwigI2t1nc6jrzNuaYg5C4YF78PPFuQPzRiqn9ew=="
+  "resolved" "https://registry.npmmirror.com/stream-wormhole/-/stream-wormhole-1.1.0.tgz"
+  "version" "1.1.0"
+
 "streamsearch@^1.1.0":
   "integrity" "sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg=="
   "resolved" "https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz"
@@ -5477,6 +5578,11 @@
     "@istanbuljs/schema" "^0.1.2"
     "glob" "^7.1.4"
     "minimatch" "^3.0.4"
+
+"text-decoding@^1.0.0":
+  "integrity" "sha512-/0TJD42KDnVwKmDK6jj3xP7E2MG7SHAOG4tyTgyUCRPdHwvkquYNLEQltmdMa3owq3TkddCVcTsoctJI8VQNKA=="
+  "resolved" "https://registry.npmmirror.com/text-decoding/-/text-decoding-1.0.0.tgz"
+  "version" "1.0.0"
 
 "text-table@^0.2.0":
   "integrity" "sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw=="
@@ -5658,7 +5764,7 @@
   "resolved" "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
   "version" "1.14.1"
 
-"tslib@^2.1.0", "tslib@^2.3.1", "tslib@2.4.0":
+"tslib@^2.1.0", "tslib@^2.2.0", "tslib@^2.3.1", "tslib@2.4.0":
   "integrity" "sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ=="
   "resolved" "https://registry.npmjs.org/tslib/-/tslib-2.4.0.tgz"
   "version" "2.4.0"
@@ -5984,7 +6090,7 @@
   "resolved" "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-11.0.1.tgz"
   "version" "11.0.1"
 
-"xtend@^4.0.0":
+"xtend@^4.0.0", "xtend@^4.0.2":
   "integrity" "sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ=="
   "resolved" "https://registry.npmjs.org/xtend/-/xtend-4.0.2.tgz"
   "version" "4.0.2"

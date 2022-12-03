@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { getConfig } from 'src/utils';
 import { AuthModule } from './auth/auth.module';
 import { TtalkModule } from './ttalk/ttalk.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TtalkModule } from './ttalk/ttalk.module';
     }),
     AuthModule,
     TtalkModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
