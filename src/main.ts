@@ -10,18 +10,16 @@ import { HttpExceptionFilter } from './comm/exceptions/http.exception.filter';
 import { TransformInterceptor } from './comm/interceptors/transform.interceptor';
 import { generateDocument } from './doc';
 import { AppModule } from './app.module';
-import { FastifyLogger } from './comm/logger';
+// import { FastifyLogger } from './comm/logger';
 import fastify from 'fastify';
-import fastifyCookie from '@fastify/cookie';
+// import fastifyCookie, { FastifyCookieOptions } from '@fastify/cookie';
 import { join } from 'path';
-import { contentParser } from 'fastify-file-interceptor';
+// import { contentParser } from 'fastify-file-interceptor';
 
 declare const module: any;
 
 async function bootstrap() {
-  const fastifyInstance: any = fastify({
-    logger: FastifyLogger,
-  });
+  const fastifyInstance: any = fastify();
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -55,10 +53,11 @@ async function bootstrap() {
     prefix: '/static/',
   });
   // 添加cookie
-  app.register(fastifyCookie, {
-    secret: 'ttalk_secret',
-  });
-  app.register(contentParser);
+  // app.register(fastifyCookie as FastifyCookieOptions, {
+  //   secret: 'ttalk_secret',
+  // });
+
+  // app.register(contentParser);
 
   await app.listen(3001);
 }

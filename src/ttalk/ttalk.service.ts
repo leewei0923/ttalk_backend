@@ -107,7 +107,6 @@ export class TtalkService {
     const userRes = await this.TTalkUserRepository.find({
       select: [
         'nickname',
-        'avatar',
         'account',
         'openid',
         'bird_date',
